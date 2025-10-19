@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Card, Row, Col, Table, Button, Input, Modal, Form, 
-  DatePicker, Select, Space, message, Popconfirm, Typography, Tag
+  DatePicker, Select, Space, message, Popconfirm, Typography, Tag, Radio, Checkbox, InputNumber
 } from 'antd';
 import {
   UserOutlined, PlusOutlined, EditOutlined, DeleteOutlined,
@@ -9,6 +9,7 @@ import {
   TeamOutlined, UserDeleteOutlined
 } from '@ant-design/icons';
 import { studentService } from '../services/studentService';
+import { courseService } from '../services/courseService';
 import dayjs from 'dayjs';
 
 const { Title } = Typography;
@@ -16,6 +17,7 @@ const { Option } = Select;
 
 const StudentsPage = () => {
   const [students, setStudents] = useState([]);
+  const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [statistics, setStatistics] = useState({
     total: 0,
@@ -39,6 +41,7 @@ const StudentsPage = () => {
   useEffect(() => {
     fetchStudents();
     fetchStatistics();
+    fetchCourses();
   }, [pagination.current, pagination.pageSize, searchText, sortField, sortOrder]);
 
   const fetchStudents = async () => {
@@ -75,6 +78,15 @@ const StudentsPage = () => {
     }
   };
 
+  const fetchCourses = async () => {
+    try {
+      const response = await courseService.getAll({ page: 0, size: 100 });
+      setCourses(response.data.content);
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+    }
+  };
+
   const handleTableChange = (newPagination, filters, sorter) => {
     setPagination({
       ...pagination,
@@ -102,14 +114,17 @@ const StudentsPage = () => {
       form.setFieldsValue({
         ...student,
         enrollmentDate: dayjs(student.enrollmentDate),
+        status: student.status === 'Active',
       });
     } else if (mode === 'view' && student) {
       form.setFieldsValue({
         ...student,
         enrollmentDate: dayjs(student.enrollmentDate),
+        status: student.status === 'Active',
       });
     } else {
       form.resetFields();
+      form.setFieldsValue({ status: true }); // Default to Active
     }
   };
 
@@ -130,6 +145,7 @@ const StudentsPage = () => {
       const studentData = {
         ...values,
         enrollmentDate: values.enrollmentDate.format('YYYY-MM-DD'),
+        status: values.status ? 'Active' : 'Inactive',
       };
 
       if (modalMode === 'add') {
@@ -171,7 +187,7 @@ const StudentsPage = () => {
       dataIndex: 'id',
       key: 'id',
       sorter: true,
-      width: 80,
+      width: 70,
     },
     {
       title: 'First Name',
@@ -186,6 +202,20 @@ const StudentsPage = () => {
       sorter: true,
     },
     {
+      title: 'Age',
+      dataIndex: 'age',
+      key: 'age',
+      sorter: true,
+      width: 80,
+    },
+    {
+      title: 'Gender',
+      dataIndex: 'gender',
+      key: 'gender',
+      sorter: true,
+      width: 100,
+    },
+    {
       title: 'Email',
       dataIndex: 'email',
       key: 'email',
@@ -195,6 +225,15 @@ const StudentsPage = () => {
       title: 'Phone',
       dataIndex: 'phone',
       key: 'phone',
+    },
+    {
+      title: 'Course',
+      dataIndex: 'courseId',
+      key: 'courseId',
+      render: (courseId) => {
+        const course = courses.find(c => c.id === courseId);
+        return course ? course.courseName : 'N/A';
+      },
     },
     {
       title: 'Enrollment Date',
@@ -208,6 +247,7 @@ const StudentsPage = () => {
       dataIndex: 'status',
       key: 'status',
       sorter: true,
+      width: 100,
       render: (status) => (
         <Tag color={status === 'Active' ? 'green' : 'red'}>
           {status}
@@ -338,7 +378,7 @@ const StudentsPage = () => {
           loading={loading}
           pagination={pagination}
           onChange={handleTableChange}
-          scroll={{ x: 1200 }}
+          scroll={{ x: 1500 }}
         />
       </Card>
 
@@ -369,7 +409,7 @@ const StudentsPage = () => {
                 label="First Name"
                 rules={[{ required: true, message: 'Please enter first name' }]}
               >
-                <Input placeholder="Enter first name" />
+                <Input id="firstName" placeholder="Enter first name" />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -378,7 +418,41 @@ const StudentsPage = () => {
                 label="Last Name"
                 rules={[{ required: true, message: 'Please enter last name' }]}
               >
-                <Input placeholder="Enter last name" />
+                <Input id="lastName" placeholder="Enter last name" />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="age"
+                label="Age"
+                rules={[
+                  { required: true, message: 'Please enter age' },
+                  { type: 'number', min: 1, max: 150, message: 'Please enter a valid age' }
+                ]}
+              >
+                <InputNumber 
+                  id="age"
+                  placeholder="Enter age" 
+                  style={{ width: '100%' }} 
+                  min={1}
+                  max={150}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="gender"
+                label="Gender"
+                rules={[{ required: true, message: 'Please select gender' }]}
+              >
+                <Radio.Group id="gender">
+                  <Radio value="Male">Male</Radio>
+                  <Radio value="Female">Female</Radio>
+                  <Radio value="Other">Other</Radio>
+                </Radio.Group>
               </Form.Item>
             </Col>
           </Row>
@@ -391,7 +465,7 @@ const StudentsPage = () => {
               { type: 'email', message: 'Please enter a valid email' }
             ]}
           >
-            <Input placeholder="Enter email address" />
+            <Input id="email" placeholder="Enter email address" />
           </Form.Item>
 
           <Form.Item
@@ -399,32 +473,46 @@ const StudentsPage = () => {
             label="Phone"
             rules={[{ required: true, message: 'Please enter phone number' }]}
           >
-            <Input placeholder="Enter phone number" />
+            <Input id="phone" placeholder="Enter phone number" />
           </Form.Item>
 
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                name="enrollmentDate"
-                label="Enrollment Date"
-                rules={[{ required: true, message: 'Please select enrollment date' }]}
-              >
-                <DatePicker style={{ width: '100%' }} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="status"
-                label="Status"
-                rules={[{ required: true, message: 'Please select status' }]}
-              >
-                <Select placeholder="Select status">
-                  <Option value="Active">Active</Option>
-                  <Option value="Inactive">Inactive</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
+          <Form.Item
+            name="courseId"
+            label="Course"
+            rules={[{ required: true, message: 'Please select a course' }]}
+          >
+            <Select 
+              id="courseId"
+              placeholder="Select a course"
+              showSearch
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                option.children.toLowerCase().includes(input.toLowerCase())
+              }
+            >
+              {courses.map(course => (
+                <Option key={course.id} value={course.id}>
+                  {course.courseCode} - {course.courseName}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            name="enrollmentDate"
+            label="Enrollment Date"
+            rules={[{ required: true, message: 'Please select enrollment date' }]}
+          >
+            <DatePicker id="enrollmentDate" style={{ width: '100%' }} />
+          </Form.Item>
+
+          <Form.Item
+            name="status"
+            label="Status"
+            valuePropName="checked"
+          >
+            <Checkbox id="status">Active</Checkbox>
+          </Form.Item>
         </Form>
       </Modal>
     </div>

@@ -1,13 +1,16 @@
 {
   "students": [
     {
+      "id": 1,
       "firstName": "John",
       "lastName": "Doe",
       "email": "john.doe@example.com",
-      "phone": "+0364635032",
+      "phone": "+1234567890",
+      "age": 22,
+      "gender": "Male",
+      "courseId": 1,
       "enrollmentDate": "2024-01-15",
-      "status": "Active",
-      "id": 1
+      "status": "Active"
     },
     {
       "id": 2,
@@ -15,6 +18,9 @@
       "lastName": "Smith",
       "email": "jane.smith@example.com",
       "phone": "+1234567891",
+      "age": 21,
+      "gender": "Female",
+      "courseId": 1,
       "enrollmentDate": "2024-02-20",
       "status": "Active"
     },
@@ -24,6 +30,9 @@
       "lastName": "Johnson",
       "email": "michael.j@example.com",
       "phone": "+1234567892",
+      "age": 23,
+      "gender": "Male",
+      "courseId": 2,
       "enrollmentDate": "2024-03-10",
       "status": "Active"
     },
@@ -33,6 +42,9 @@
       "lastName": "Williams",
       "email": "emily.w@example.com",
       "phone": "+1234567893",
+      "age": 20,
+      "gender": "Female",
+      "courseId": 1,
       "enrollmentDate": "2024-01-25",
       "status": "Inactive"
     },
@@ -42,6 +54,9 @@
       "lastName": "Brown",
       "email": "david.b@example.com",
       "phone": "+1234567894",
+      "age": 24,
+      "gender": "Male",
+      "courseId": 3,
       "enrollmentDate": "2024-04-05",
       "status": "Active"
     },
@@ -51,6 +66,9 @@
       "lastName": "Jones",
       "email": "sarah.j@example.com",
       "phone": "+1234567895",
+      "age": 22,
+      "gender": "Female",
+      "courseId": 4,
       "enrollmentDate": "2024-05-12",
       "status": "Active"
     },
@@ -60,6 +78,9 @@
       "lastName": "Davis",
       "email": "robert.d@example.com",
       "phone": "+1234567896",
+      "age": 25,
+      "gender": "Male",
+      "courseId": 5,
       "enrollmentDate": "2024-06-18",
       "status": "Active"
     },
@@ -69,6 +90,9 @@
       "lastName": "Miller",
       "email": "lisa.m@example.com",
       "phone": "+1234567897",
+      "age": 21,
+      "gender": "Female",
+      "courseId": 2,
       "enrollmentDate": "2024-07-22",
       "status": "Inactive"
     },
@@ -78,6 +102,9 @@
       "lastName": "Wilson",
       "email": "james.w@example.com",
       "phone": "+1234567898",
+      "age": 23,
+      "gender": "Male",
+      "courseId": 7,
       "enrollmentDate": "2024-08-30",
       "status": "Active"
     },
@@ -87,6 +114,9 @@
       "lastName": "Garcia",
       "email": "maria.g@example.com",
       "phone": "+1234567899",
+      "age": 22,
+      "gender": "Female",
+      "courseId": 8,
       "enrollmentDate": "2024-09-14",
       "status": "Active"
     }
